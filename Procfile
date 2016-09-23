@@ -1,1 +1,1 @@
-web: gunicorn metterboard.wsgi
+web: gunicorn metterboard.wsgi:app
