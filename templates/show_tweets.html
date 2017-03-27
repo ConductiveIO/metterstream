@@ -1,0 +1,16 @@
+<!Doctype html>
+<html>
+<head>
+<title></title>
+</head>
+<body>
+{% for tweet in tweets %}
+<p>
+  <image src={{ tweet.profile_image_url }}>
+  <b>{{ tweet.screen_name }}</b>
+  {{ tweet.user }}
+</p>
+  {{ tweet.text }}
+{% endfor %}
+</body>
+</html>
