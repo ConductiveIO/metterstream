@@ -1,6 +1,8 @@
 import sqlite3
+from config import CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET
 from tweepy import API, StreamListener, OAuthHandler, Stream, TweepError
-from flask import Flask, render_template, g
+from flask import Flask, render_template, g, jsonify
+from flask_socketio import SocketIO, emit
 import os
 from multiprocessing import Process
 
@@ -15,6 +17,11 @@ app.config.update(dict(
 ))
 app.config.from_envvar('MB_SETTINGS', silent=True)
 
+socketio = SocketIO(app)
+
+@socketio.on('my_event')
+def test_message(message):
+    print message
 
 def connect_db():
     db = sqlite3.connect(app.config['DATABASE'], check_same_thread=False)
@@ -23,10 +30,11 @@ def connect_db():
 
 def init_db():
     """Initializes the database."""
-    db = get_db()
-    with app.open_resource('mb_schema.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('mb_schema.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
 
 @app.cli.command('initdb')
 def initdb_command():
@@ -51,11 +59,6 @@ def show_entries():
 
 @app.route('/admin/<hashtag>')
 def admin(hashtag):
-    '''
-    proc = Process(target=track, args=(hashtag,))
-    proc.start()
-    proc.join()
-    '''
     track(hashtag)
     return hashtag
 
@@ -65,12 +68,21 @@ class TweetListener(StreamListener):
         self.db = db
 
     def on_status(self, data):
-        self.db.execute(
-                """insert into tbltweet (text, user, screen_name, profile_image_url) 
-                values (\"%s\", \"%s\", \"%s\", \"%s\");
-                """ % (data.text, data.user.name, data.author.screen_name, data.author.profile_image_url)
-                )
-        self.db.commit()
+        # Persist tweet to DB
+        with app.test_request_context():
+            self.db.execute(
+                    """insert into tbltweet (text, user, screen_name, profile_image_url) 
+                    values (\"%s\", \"%s\", \"%s\", \"%s\");
+                    """ % (data.text.replace('"', '\''), 
+                        data.user.name.replace('"', '\''), 
+                        data.author.screen_name.replace('"', '\''), 
+                        data.author.profile_image_url.replace('"', '\''))
+                    )
+            self.db.commit()
+            
+            # Stream tweet to client
+            json_data = jsonify({'text': data.text, 'user': data.user.name, 'screen_name': data.author.screen_name, 'profile_image_url': data.user.profile_image_url})
+            socketio.emit('tweetstream', json_data.data)
         return True
 
 def track(hashtag):
@@ -82,3 +94,7 @@ def track(hashtag):
     listener.api = api
     stream = Stream(api.auth, listener)
     stream.filter(track=[hashtag], async=True)
+
+if __name__ == '__main__':
+    init_db()
+    socketio.run(app)
