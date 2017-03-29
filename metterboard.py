@@ -17,7 +17,10 @@ app.config.update(dict(
 ))
 app.config.from_envvar('MB_SETTINGS', silent=True)
 
-socketio = SocketIO(app)
+socketio = SocketIO(app,  async_mode='gevent', ping_timeout=30, logger=False, engineio_logger=False)
+
+# Connections to Twitter
+streams = []
 
 @socketio.on('my_event')
 def test_message(message):
@@ -59,7 +62,10 @@ def show_entries():
 
 @app.route('/admin/<hashtag>')
 def admin(hashtag):
-    track(hashtag)
+    for stream in streams:
+        stream.disconnect()
+    stream = track(hashtag)
+    streams.append(stream)
     return hashtag
 
 class TweetListener(StreamListener):
@@ -69,31 +75,40 @@ class TweetListener(StreamListener):
 
     def on_status(self, data):
         # Persist tweet to DB
+        import pdb; pdb.set_trace()
         with app.test_request_context():
             self.db.execute(
                     """insert into tbltweet (text, user, screen_name, profile_image_url) 
-                    values (\"%s\", \"%s\", \"%s\", \"%s\");
-                    """ % (data.text.replace('"', '\''), 
+                    values (%d, \"%s\", \"%s\", \"%s\", \"%s\");
+                    """ % (data.id,
+                        data.text.replace('"', '\''), 
                         data.user.name.replace('"', '\''), 
                         data.author.screen_name.replace('"', '\''), 
                         data.author.profile_image_url.replace('"', '\''))
                     )
             self.db.commit()
-            
+            print 'tweet by ' + str(data.user.name.encode('utf-8').strip())
             # Stream tweet to client
-            json_data = jsonify({'text': data.text, 'user': data.user.name, 'screen_name': data.author.screen_name, 'profile_image_url': data.user.profile_image_url})
-            socketio.emit('tweetstream', json_data.data)
+            json_data = jsonify({
+                'text': data.text.encode('utf-8').strip(), 
+                'user': data.user.name.encode('utf-8').strip(), 
+                'screen_name': data.author.screen_name.encode('utf-8').strip(), 
+                'profile_image_url': data.user.profile_image_url.encode('utf-8').strip()
+            })
+            socketio.emit('tweetstream', json_data.data.encode('utf-8').strip())
         return True
 
 def track(hashtag):
     auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
     api = API(auth)
-
+    
     listener = TweetListener(get_db())
     listener.api = api
     stream = Stream(api.auth, listener)
     stream.filter(track=[hashtag], async=True)
+   
+    return stream
 
 if __name__ == '__main__':
     init_db()

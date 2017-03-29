@@ -6,11 +6,10 @@
 <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" charset="utf-8">
   var socket = io.connect('http://localhost:' + location.port);
-  socket.on('connect', function() {
-    socket.emit('my_event', {data: 'I\'m connected!'});
-  });
   socket.on('tweetstream', function(msg) {
     console.log(msg);
+    msg=JSON.parse(msg);
+    $('.tweet_board').prepend('<p><image src="' + msg["profile_image_url"] + '"><b>' + msg["screen_name"] + '</b>' + msg["user"] + '</p>' + msg["text"]);
   });
 </script>
 </head>
