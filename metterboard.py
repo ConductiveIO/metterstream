@@ -75,7 +75,6 @@ class TweetListener(StreamListener):
 
     def on_status(self, data):
         # Persist tweet to DB
-        import pdb; pdb.set_trace()
         with app.test_request_context():
             self.db.execute(
                     """insert into tbltweet (text, user, screen_name, profile_image_url) 
@@ -90,6 +89,7 @@ class TweetListener(StreamListener):
             print 'tweet by ' + str(data.user.name.encode('utf-8').strip())
             # Stream tweet to client
             json_data = jsonify({
+                'id': data.id.encode('utf-8').strip(),
                 'text': data.text.encode('utf-8').strip(), 
                 'user': data.user.name.encode('utf-8').strip(), 
                 'screen_name': data.author.screen_name.encode('utf-8').strip(), 
@@ -109,7 +109,3 @@ def track(hashtag):
     stream.filter(track=[hashtag], async=True)
    
     return stream
-
-if __name__ == '__main__':
-    init_db()
-    socketio.run(app)
