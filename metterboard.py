@@ -25,28 +25,10 @@ socketio = SocketIO(app,  async_mode='gevent', ping_timeout=30, logger=False, en
 # Connections to Twitter
 streams = []
 
-@socketio.on('my_event')
-def test_message(message):
-    print message
-
 def connect_db():
     db = sqlite3.connect(app.config['DATABASE'], check_same_thread=False)
     db.row_factory = sqlite3.Row
     return db
-
-def init_db():
-    """Initializes the database."""
-    with app.app_context():
-        db = get_db()
-        with app.open_resource('mb_schema.sql', mode='r') as f:
-            db.cursor().executescript(f.read())
-        db.commit()
-
-@app.cli.command('initdb')
-def initdb_command():
-    """Creates the database tables."""
-    init_db()
-    print('Initialized the database')
 
 def get_db():
     """Opens a new database connection if there is none yet for the
@@ -55,6 +37,18 @@ def get_db():
     if not hasattr(g, 'sqlite_db'):
         g.sqlite_db = connect_db()
     return g.sqlite_db
+
+def init_db():
+    """Initializes the database."""
+    with app.app_context():
+        db = get_db()
+        with app.open_resource('mb_schema.sql', mode='r') as f:
+            db.cursor().executescript(f.read())
+        db.commit()
+        return db
+
+# Initialize DB
+init_db()
 
 @app.route('/')
 def show_entries():
