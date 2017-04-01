@@ -1,11 +1,15 @@
 import sqlite3
-from config import CONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN, ACCESS_SECRET
 from tweepy import API, StreamListener, OAuthHandler, Stream, TweepError
 from flask import Flask, render_template, g, jsonify
 from flask_socketio import SocketIO, emit
 import os
 from multiprocessing import Process
 
+
+CONSUMER_KEY = os.environ.get('CONSUMER_KEY')
+CONSUMER_SECRET = os.environ.get('CONSUMER_SECRET')
+ACCESS_TOKEN = os.environ.get('ACCESS_TOKEN')
+ACCESS_SECRET = os.environ.get('ACCESS_SECRET')
 
 app = Flask(__name__)
 app.config.update(dict(
@@ -15,7 +19,6 @@ app.config.update(dict(
     USERNAME='admin',
     PASSWORD='default'
 ))
-app.config.from_envvar('MB_SETTINGS', silent=True)
 
 socketio = SocketIO(app,  async_mode='gevent', ping_timeout=30, logger=False, engineio_logger=False)
 
@@ -77,7 +80,7 @@ class TweetListener(StreamListener):
         # Persist tweet to DB
         with app.test_request_context():
             self.db.execute(
-                    """insert into tbltweet (text, user, screen_name, profile_image_url) 
+                    """insert into tbltweet (id, text, user, screen_name, profile_image_url) 
                     values (%d, \"%s\", \"%s\", \"%s\", \"%s\");
                     """ % (data.id,
                         data.text.replace('"', '\''), 
@@ -89,7 +92,7 @@ class TweetListener(StreamListener):
             print 'tweet by ' + str(data.user.name.encode('utf-8').strip())
             # Stream tweet to client
             json_data = jsonify({
-                'id': data.id.encode('utf-8').strip(),
+                'id': int(data.id),
                 'text': data.text.encode('utf-8').strip(), 
                 'user': data.user.name.encode('utf-8').strip(), 
                 'screen_name': data.author.screen_name.encode('utf-8').strip(), 
