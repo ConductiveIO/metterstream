@@ -11,7 +11,7 @@ p {
 	margin:0;
 }
 
-img {
+.tweet_pic img {
 	width:100px;
 	height:100px;
 	padding:10px;
@@ -70,6 +70,10 @@ img#metter {
 
 .tweet_pic p {
 	display:inline-block;
+}
+
+.tweet_pic {
+        vertical-align: top;
 }
 
 .tweet_content {

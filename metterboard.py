@@ -49,16 +49,16 @@ init_db()
 @socketio.on('connection')
 def handle_connection(msg):
     db = get_db()
-    cur = db.execute('select id, text, user, screen_name, profile_image_url from tblTweet order by id desc')
+    cur = db.execute('select id, text, user, screen_name, profile_image_url, media_url from tblTweet order by id desc')
     tweets = cur.fetchall()
     for tweet in tweets:
-        print 'persisted tweet by ' + tweet['user']
         json_data = jsonify({
             'id': tweet['id'],
             'text': tweet['text'], 
             'user': tweet['user'], 
             'screen_name': tweet['screen_name'], 
-            'profile_image_url': tweet['profile_image_url']
+            'profile_image_url': tweet['profile_image_url'],
+            'media_url': tweet['media_url']
         })
         socketio.emit(msg['client'], json_data.data)
 
@@ -108,25 +108,35 @@ class TweetListener(StreamListener):
     def on_status(self, data):
         # Persist tweet to DB
         with app.test_request_context():
+            media_url = data.entities['media'][0]['media_url'] if data.entities.get('media') else None
+            print media_url
             self.db.execute(
-                    """insert into tbltweet (id, text, user, screen_name, profile_image_url) 
-                    values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
+                    """insert into tbltweet (id, text, user, screen_name, profile_image_url, media_url) 
+                    values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
                     """ % (data.id_str.encode('utf-8'),
                         data.text.replace('"', '\'').encode('utf-8').strip(), 
                         data.user.name.replace('"', '\'').encode('utf-8').strip(), 
                         data.author.screen_name.replace('"', '\'').encode('utf-8').strip(), 
-                        data.author.profile_image_url.replace('"', '\'').encode('utf-8').strip())
-                    )
+                        data.author.profile_image_url.replace('"', '\'').encode('utf-8').strip(),
+                        media_url.replace('"', '\'').encode('utf-8').strip() if media_url else str(media_url)
+                    ))
             self.db.commit()
-            print 'tweet by ' + str(data.user.name.encode('utf-8').strip())
+            
             # Stream tweet to client
-            json_data = jsonify({
+            data = {
                 'id': data.id_str.encode('utf-8'),
                 'text': data.text.encode('utf-8').strip(), 
                 'user': data.user.name.encode('utf-8').strip(), 
                 'screen_name': data.author.screen_name.encode('utf-8').strip(), 
                 'profile_image_url': data.user.profile_image_url.encode('utf-8').strip()
-            })
+            }
+
+            # Add media url if present
+            if media_url:
+                data['media_url'] = media_url.replace('"', '\'').encode('utf-8').strip()
+            
+            # Transmit tweet to clients
+            json_data = jsonify(data)
             socketio.emit('tweetstream', json_data.data.encode('utf-8').strip())
             socketio.emit('admin_tweetstream', json_data.data.encode('utf-8').strip())
         return True

@@ -16,8 +16,8 @@
   socket.on('tweetstream', function(msg) {
     var data = JSON.parse(msg);
     var context = {'profile_image': data['profile_image_url'], 'screen_name': data['screen_name'], 'user': data['user'], 'text': data['text'], 'id': data['id']};
+    if (data['media_url'] !== 'None') context['media'] = data['media_url']; 
     var html = Handlebars.templates.tweet(context);
-    console.log('tweet by ' + data['screen_name']);
     $('.tweet_board').prepend(html);
   });
   socket.on('delete_tweet_from_display', function(msg) {
