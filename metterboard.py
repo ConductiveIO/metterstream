@@ -46,21 +46,38 @@ def init_db():
 # Initialize DB
 init_db()
 
-@app.route('/')
-def show_entries():
+@socketio.on('connection')
+def handle_connection(msg):
     db = get_db()
-    cur = db.execute('select text, user, screen_name, profile_image_url from tblTweet order by id desc')
+    cur = db.execute('select id, text, user, screen_name, profile_image_url from tblTweet order by id desc')
     tweets = cur.fetchall()
     for tweet in tweets:
+        print 'persisted tweet by ' + tweet['user']
         json_data = jsonify({
-            'id': int(tweet.id),
-            'text': tweet.text.encode('utf-8').strip(), 
-            'user': tweet.user.name.encode('utf-8').strip(), 
-            'screen_name': tweet.author.screen_name.encode('utf-8').strip(), 
-            'profile_image_url': tweet.user.profile_image_url.encode('utf-8').strip()
+            'id': tweet['id'],
+            'text': tweet['text'], 
+            'user': tweet['user'], 
+            'screen_name': tweet['screen_name'], 
+            'profile_image_url': tweet['profile_image_url']
         })
-        socketio.emit('tweetstream', json_data.data.encode('utf-8').strip())
+        socketio.emit(msg['client'], json_data.data)
 
+@socketio.on('delete_tweet')
+def delete_tweet(msg):
+    tweet_id = msg.get('id')
+    if tweet_id:
+        delete_from_db(tweet_id)
+        socketio.emit('delete_tweet_from_display', {'id': tweet_id})
+
+def delete_from_db(tweet_id):
+    db = get_db()
+    cur = db.execute("""
+        DELETE FROM tblTweet WHERE ID = %s;
+    """ % (tweet_id))
+    db.commit()
+
+@app.route('/')
+def show_entries():
     return render_template('show_tweets.html')
 
 @app.route('/admin')
@@ -93,24 +110,25 @@ class TweetListener(StreamListener):
         with app.test_request_context():
             self.db.execute(
                     """insert into tbltweet (id, text, user, screen_name, profile_image_url) 
-                    values (%d, \"%s\", \"%s\", \"%s\", \"%s\");
-                    """ % (data.id,
-                        data.text.replace('"', '\''), 
-                        data.user.name.replace('"', '\''), 
-                        data.author.screen_name.replace('"', '\''), 
-                        data.author.profile_image_url.replace('"', '\''))
+                    values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
+                    """ % (data.id_str.encode('utf-8'),
+                        data.text.replace('"', '\'').encode('utf-8').strip(), 
+                        data.user.name.replace('"', '\'').encode('utf-8').strip(), 
+                        data.author.screen_name.replace('"', '\'').encode('utf-8').strip(), 
+                        data.author.profile_image_url.replace('"', '\'').encode('utf-8').strip())
                     )
             self.db.commit()
             print 'tweet by ' + str(data.user.name.encode('utf-8').strip())
             # Stream tweet to client
             json_data = jsonify({
-                'id': int(data.id),
+                'id': data.id_str.encode('utf-8'),
                 'text': data.text.encode('utf-8').strip(), 
                 'user': data.user.name.encode('utf-8').strip(), 
                 'screen_name': data.author.screen_name.encode('utf-8').strip(), 
                 'profile_image_url': data.user.profile_image_url.encode('utf-8').strip()
             })
             socketio.emit('tweetstream', json_data.data.encode('utf-8').strip())
+            socketio.emit('admin_tweetstream', json_data.data.encode('utf-8').strip())
         return True
 
 def track(hashtag):

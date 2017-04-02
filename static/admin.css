@@ -36,21 +36,6 @@ h1 {
 
 }
 
-img#microsoft {
-	width:150px;
-	display:inline-block;
-	margin-right:20px;
-	padding:0;
-}
-
-img#metter {
-	width:130px;
-	display:inline-block;
-	margin-left:20px;
-	padding:0;
-}
-
-
 .divider {
 	height:1px;
 	background-color: #CCC;
@@ -63,7 +48,7 @@ img#metter {
 
 /* Tweet Styling */
 
-.tweet_pic, .tweet_content{
+.tweet_pic, .tweet_content, .tweet_controls{
 	display:inline-block;
 	overflow:visible;
 }
@@ -114,43 +99,6 @@ p.handle {
 	padding-right:5px;
 }
 
-
-
-/*Red*/
-.zero_box_red {
-	background-color: rgba(255,61,0,0.5);
-	color:#fff;
- 	box-shadow: 10px 10px 0px 0px #B32B00;
-}
-
-/*Green1*/
-.one_box_green1 {
-	background-color: rgba(131,184,12,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #5E8500;
-}
-
-/*Green2*/
-.two_box_green2 {
-	background-color: rgba(101,159,0,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #3A5B00;
-}
-/*Blue1*/
-.three_box_blue1 {
-	background-color: rgba(25,193,224,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #117F93;
-}
-/*Blue2*/
-.four_box_blue2 {
-	background-color: rgba(1,141,183,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #004F67;
-}
-
-.title_holder img{
-  text-align: center;
-  width: 450px;
-  margin-top: 20px;
+.tweet_controls {
+        vertical-align: middle;
 }

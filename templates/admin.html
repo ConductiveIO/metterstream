@@ -2,8 +2,14 @@
 <html>
 <head>
 <title>Metterboard Admin Panel</title>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js" 
+  integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" 
+  crossorigin="anonymous">
+</script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-<script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='admin_tweet.tpl.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='admin.css') }}">
 <script type="text/javascript" charset="utf-8">
   var socket = io.connect('http://' + document.domain + ':' + location.port);
   $(document).ready(function() {
@@ -11,15 +17,39 @@
       e.preventDefault();
       $.get('http://' + document.domain + ':' + location.port + '/track/' + $('input[name=hashtag]').val());
       console.log('http://' + document.domain + ':' + location.port + '/track/' + $('input[name=hashtag]').val());
-    });     
+    });
+    $('#kill_stream').click(function(e) {
+      e.preventDefault();
+      $.get('http://' + document.domain + ':' + location.port + '/halt');
+    });
+    $('body').on('click', '.destroy', function(e) {
+      e.preventDefault();
+      socket.emit('delete_tweet', {'id': $(this).attr('id')});
+      $('.tweet#' + $(this).attr('id')).remove();
+    });
+    socket.on('admin_tweetstream', function(msg) {
+      var data = JSON.parse(msg);
+      var context = {'profile_image': data['profile_image_url'], 'screen_name': data['screen_name'], 'user': data['user'], 'text': data['text'], 'id': data['id']};
+      var html = Handlebars.templates.admin_tweet(context);
+      console.log('tweet by ' + data['screen_name']);
+      $('.tweet_board').prepend(html);
+    });
+  socket.emit('connection', {'client':'admin_tweetstream'});
   });
 </script>
 </head>
 <body>
-  <h1> Metterboard Admin Panel </h1>
-  <form name="hashtag_form">
-    Hashtag: <input type="text" name="hashtag">
-    <input type="submit" value="Submit">
-  </form>
+  <div id="header">
+    <h1> Metterboard Admin Panel </h1>
+  </div>
+  <div id="controls">
+    <form name="hashtag_form">
+      Hashtag: <input type="text" name="hashtag">
+      <input type="submit" value="Submit">
+    </form>
+    <button id="kill_stream">Kill Stream</button>
+  </div>
+  <div class="tweet_board">
+  </div>
 </body>
 </html>
