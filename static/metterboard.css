@@ -1,7 +1,14 @@
+@font-face {
+  	font-family: 'BebasNeue';
+  	src:  url('fonts/BebasNeue.otf') format('opentype');
+
+}
+
 body{
-	background-color:#ccc;
+	background-color:#fff;
 	font-family:sans-serif;
 	color:#fff;
+	margin:0;
 }
 
 
@@ -19,24 +26,39 @@ p {
 
 h1 {
 	margin:0;
+	padding-top:50px;
 	font-size:4em;
+	font-family: 'BebasNeue', sans-serif;
+	font-weight:300;
 }
 
 .top_div {
-	margin:10px;
+	margin:0px;
+	height:200px;
+	background: #ed5630; /* Old browsers */
+	background: -moz-linear-gradient(top, #ed5630 0%, #fcfcfc 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #ed5630 0%,#fcfcfc 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #ed5630 0%,#fcfcfc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed5630', endColorstr='#fcfcfc',GradientType=0 ); /* IE6-9 */
 }
 
 .title_holder {
 	text-align:center;
+
+}
+
+.title_holder img {
+	width:1000px;
 }
 
 .image_holder {
 	text-align:center;
-	margin-top:-30px;
-
+	margin:-50px;
 }
 
 img#microsoft {
+        height:100px;
+	margin-top:-50px;
 	width:150px;
 	display:inline-block;
 	margin-right:20px;
@@ -44,7 +66,8 @@ img#microsoft {
 }
 
 img#metter {
-	width:130px;
+	height:100px;
+        width:130px;
 	display:inline-block;
 	margin-left:20px;
 	padding:0;
@@ -77,10 +100,8 @@ img#metter {
 }
 
 .tweet_content {
-	width: 800px;
-        margin-bottom:0px;
-	margin-left:20px;
-        padding-bottom:10px; 
+	margin-bottom:0px;
+	margin-left:125px;
 }
 
 .tweet_content img {
@@ -118,39 +139,11 @@ p.handle {
 	padding-right:5px;
 }
 
-
-
 /*Red*/
 .zero_box_red {
-	background-color: rgba(255,61,0,0.5);
+	background-color:#cecece;
 	color:#fff;
- 	box-shadow: 10px 10px 0px 0px #B32B00;
-}
-
-/*Green1*/
-.one_box_green1 {
-	background-color: rgba(131,184,12,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #5E8500;
-}
-
-/*Green2*/
-.two_box_green2 {
-	background-color: rgba(101,159,0,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #3A5B00;
-}
-/*Blue1*/
-.three_box_blue1 {
-	background-color: rgba(25,193,224,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #117F93;
-}
-/*Blue2*/
-.four_box_blue2 {
-	background-color: rgba(1,141,183,0.5);
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #004F67;
+ 	box-shadow: 20px 20px 0px 0px #7c7c7c;
 }
 
 .title_holder img{
