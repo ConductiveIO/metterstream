@@ -107,9 +107,9 @@ class TweetListener(StreamListener):
 
     def on_status(self, data):
         # Persist tweet to DB
+        print 'tweet received' 
         with app.test_request_context():
             media_url = data.entities['media'][0]['media_url'] if data.entities.get('media') else None
-            print media_url
             self.db.execute(
                     """insert into tbltweet (id, text, user, screen_name, profile_image_url, media_url) 
                     values (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
@@ -142,8 +142,12 @@ class TweetListener(StreamListener):
         return True
 
 def track(hashtag):
+    print 'setting up tracking'
     auth = OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
+    print 'auth'
+    if CONSUMER_KEY:
+        print CONSUMER_KEY
     api = API(auth)
     
     listener = TweetListener(get_db())
