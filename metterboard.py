@@ -1,5 +1,5 @@
-import sqlite3
 from tweepy import API, StreamListener, OAuthHandler, Stream, TweepError
+import sqlite3
 from flask import Flask, render_template, g, jsonify, make_response, request
 from flask_socketio import SocketIO, emit
 import os
