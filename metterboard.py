@@ -91,6 +91,13 @@ def track(hashtag):
     streams.append(stream)
     return make_response('', 200)
 
+@app.route('/clear_db', methods=['GET'])
+def clear_db():
+    db = get_db()
+    db.execute('truncate table tblTweets;')
+    db.commit()
+    return make_response()
+
 @app.route('/halt', methods=['GET'])
 def halt():
     halt_streams()
