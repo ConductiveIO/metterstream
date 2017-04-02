@@ -1,0 +1,154 @@
+body{
+	background-color:#ccc;
+	font-family:sans-serif;
+	color:#fff;
+}
+
+
+p {
+	color:#fff;
+	font-family: 'Source Sans Pro', sans-serif;
+	margin:0;
+}
+
+img {
+	width:100px;
+	height:100px;
+	padding:10px;
+}
+
+h1 {
+	margin:0;
+	font-size:4em;
+}
+
+.top_div {
+	margin:10px;
+}
+
+.title_holder {
+	text-align:center;
+}
+
+.image_holder {
+	text-align:center;
+	margin-top:-30px;
+
+}
+
+img#microsoft {
+	width:150px;
+	display:inline-block;
+	margin-right:20px;
+	padding:0;
+}
+
+img#metter {
+	width:130px;
+	display:inline-block;
+	margin-left:20px;
+	padding:0;
+}
+
+
+.divider {
+	height:1px;
+	background-color: #CCC;
+}
+
+.tweet_board {
+	margin-top: 10px;
+	margin-right:20px;
+}
+
+/* Tweet Styling */
+
+.tweet_pic, .tweet_content{
+	display:inline-block;
+	overflow:visible;
+}
+
+.tweet_pic p {
+	display:inline-block;
+}
+
+.tweet_content {
+	margin-bottom:0px;
+	margin-left:125px;
+}
+
+.tweet_content img {
+	max-width:800px;
+	min-width:700px;
+}
+
+.username{
+	font-size:1.3em;
+	padding:0px;
+	margin:0px;
+}
+
+.handle {
+	font-size:1.3em;
+}
+
+p.handle {
+	margin:0px;
+}
+
+.tweet {
+	margin-top:30px;
+}
+
+.tweet_body p{
+	padding-bottom:30px;
+	margin-left:130px;
+	font-size:1.3em;
+}
+
+.tweet_text {
+	font-size:1.5em;
+	margin:0;
+	padding-right:5px;
+}
+
+
+
+/*Red*/
+.zero_box_red {
+	background-color: rgba(255,61,0,0.5);
+	color:#fff;
+ 	box-shadow: 20px 20px 0px 0px #B32B00;
+}
+
+/*Green1*/
+.one_box_green1 {
+	background-color: rgba(131,184,12,0.5);
+	color:#fff;
+ 	box-shadow: 20px 20px 0px 0px #5E8500;
+}
+
+/*Green2*/
+.two_box_green2 {
+	background-color: rgba(101,159,0,0.5);
+	color:#fff;
+ 	box-shadow: 20px 20px 0px 0px #3A5B00;
+}
+/*Blue1*/
+.three_box_blue1 {
+	background-color: rgba(25,193,224,0.5);
+	color:#fff;
+ 	box-shadow: 20px 20px 0px 0px #117F93;
+}
+/*Blue2*/
+.four_box_blue2 {
+	background-color: rgba(1,141,183,0.5);
+	color:#fff;
+ 	box-shadow: 20px 20px 0px 0px #004F67;
+}
+
+.title_holder img{
+  text-align: center;
+  width: 450px;
+  margin-top: 20px;
+}

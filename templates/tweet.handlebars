@@ -1,0 +1,13 @@
+<div class="tweet zero_box_red">
+  <div class="tweet_pic">
+    <image src={{profile_image}}> 
+    <p class="username"><b>{{user}}</b></p>
+    <p class="handle">{{screen_name}}</p>  
+  </div>
+  <div class="tweet_content">
+    <p class="tweet_text">{{text}}</p>
+    {{#if media}}
+      <img src={{media}}>
+    {{/if}}
+  </div>
+</div>

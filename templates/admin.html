@@ -2,10 +2,22 @@
 <html>
 <head>
 <title>Metterboard Admin Panel</title>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+<script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+  var socket = io.connect('http://' + document.domain + ':' + location.port);
+  $(document).ready(function() {
+    $('form[name=hashtag_form]').submit(function(e){
+      e.preventDefault();
+      $.get('http://' + document.domain + ':' + location.port + '/track/' + $('input[name=hashtag]').val());
+      console.log('http://' + document.domain + ':' + location.port + '/track/' + $('input[name=hashtag]').val());
+    });     
+  });
+</script>
 </head>
 <body>
   <h1> Metterboard Admin Panel </h1>
-  <form action="/track">
+  <form name="hashtag_form">
     Hashtag: <input type="text" name="hashtag">
     <input type="submit" value="Submit">
   </form>

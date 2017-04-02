@@ -1,6 +1,6 @@
 import sqlite3
 from tweepy import API, StreamListener, OAuthHandler, Stream, TweepError
-from flask import Flask, render_template, g, jsonify
+from flask import Flask, render_template, g, jsonify, make_response, request
 from flask_socketio import SocketIO, emit
 import os
 from multiprocessing import Process
@@ -13,11 +13,7 @@ ACCESS_SECRET = os.environ.get('ACCESS_SECRET')
 
 app = Flask(__name__)
 app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'metterboard.db'),
-    DEBUG=True,
-    SECRET_KEY='supersecret',
-    USERNAME='admin',
-    PASSWORD='default'
+    DATABASE=os.path.join(app.root_path, 'metterboard.db')
 ))
 
 socketio = SocketIO(app,  async_mode='gevent', ping_timeout=30, logger=False, engineio_logger=False)
@@ -55,15 +51,37 @@ def show_entries():
     db = get_db()
     cur = db.execute('select text, user, screen_name, profile_image_url from tblTweet order by id desc')
     tweets = cur.fetchall()
-    return render_template('show_tweets.html', tweets=tweets)
+    for tweet in tweets:
+        json_data = jsonify({
+            'id': int(tweet.id),
+            'text': tweet.text.encode('utf-8').strip(), 
+            'user': tweet.user.name.encode('utf-8').strip(), 
+            'screen_name': tweet.author.screen_name.encode('utf-8').strip(), 
+            'profile_image_url': tweet.user.profile_image_url.encode('utf-8').strip()
+        })
+        socketio.emit('tweetstream', json_data.data.encode('utf-8').strip())
 
-@app.route('/admin/<hashtag>')
-def admin(hashtag):
-    for stream in streams:
-        stream.disconnect()
+    return render_template('show_tweets.html')
+
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
+@app.route('/track/<hashtag>', methods=['GET'])
+def track(hashtag):
+    halt_streams()
     stream = track(hashtag)
     streams.append(stream)
-    return hashtag
+    return make_response('', 200)
+
+@app.route('/halt', methods=['GET'])
+def halt():
+    halt_streams()
+    return make_response('', 200)
+
+def halt_streams():
+    for stream in streams:
+        stream.disconnect()
 
 class TweetListener(StreamListener):
 

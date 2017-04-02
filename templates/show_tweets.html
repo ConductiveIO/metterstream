@@ -4,28 +4,32 @@
 <title></title>
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
 <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='metterboard.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+<script type="text/javascript" src="{{ url_for('static', filename='tweet.tpl.js') }}"></script>
 <script type="text/javascript" charset="utf-8">
   var socket = io.connect('http://' + document.domain + ':' + location.port);
   socket.on('tweetstream', function(msg) {
-    console.log(msg);
-    msg=JSON.parse(msg);
-    $('.tweet_board').prepend('<p><image src="' + msg["profile_image_url"] + '"><b>' + msg["screen_name"] + '</b>' + msg["user"] + '</p>' + msg["text"]);
+    var data = JSON.parse(msg);
+    var context = {'profile_image': data['profile_image_url'], 'screen_name': data['screen_name'], 'user': data['user'], 'text': data['text']};
+    var html = Handlebars.templates.tweet(context);
+    console.log('tweet by ' + data['screen_name']);
+    $('.tweet_board').prepend(html);
   });
 </script>
 </head>
 <body>
-<div class="top_div">
-  <h1> Awesome Event Time! </h1>
-</div>
-<div class="tweet_board">
-{% for tweet in tweets %}
-<p>
-  <image src={{ tweet.profile_image_url }}>
-  <b>{{ tweet.screen_name }}</b>
-  {{ tweet.user }}
-</p>
-  {{ tweet.text }}
-{% endfor %}
-</div>
+  <div class="top_div">
+    <div class="title_holder">
+      <h1>#CIVICTECHBOS</h1>
+      <div class="image_holder">
+        <img id="microsoft" src="{{ url_for('static', filename='img/microsoft.svg') }}">
+        <img id="metter" src="{{ url_for('static', filename='img/metter_media.svg') }}">
+      </div>
+    </div>
+  </div>
+  <div class="tweet_board">
+  </div>
 </body>
 </html>
