@@ -1,9 +1,20 @@
-from tweepy import API, StreamListener, OAuthHandler, Stream, TweepError
-import sqlite3
+"""
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* Copyright (C) Metter Media LLC - All Rights Reserved                      *
+* Unauthorized copying of this file, via any medium is strictly prohibited  *
+* Proprietary and confidential                                              *
+* All Rights Reserved                                                       *
+* Written by Robby Grodin <robby@toypig.co>, March 2017                     *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+"""
+from multiprocessing import Process
+import os
+
 from flask import Flask, render_template, g, jsonify, make_response, request
 from flask_socketio import SocketIO, emit
-import os
-from multiprocessing import Process
+from tweepy import API, StreamListener, OAuthHandler, Stream, TweepError
+import sqlite3
+
 
 # Configure global variables
 CONSUMER_KEY = os.environ.get('CONSUMER_KEY')
