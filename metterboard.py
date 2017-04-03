@@ -94,7 +94,7 @@ def track(hashtag):
 @app.route('/clear_db', methods=['GET'])
 def clear_db():
     db = get_db()
-    db.execute('truncate table tblTweets;')
+    db.execute('DELETE FROM tblTweet;')
     db.commit()
     return make_response()
 
@@ -114,7 +114,6 @@ class TweetListener(StreamListener):
 
     def on_status(self, data):
         # Persist tweet to DB
-        print 'tweet received' 
         with app.test_request_context():
             media_url = data.entities['media'][0]['media_url'] if data.entities.get('media') else None
             self.db.execute(

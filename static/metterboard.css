@@ -13,7 +13,7 @@ body{
 
 
 p {
-	color:#fff;
+	color:#000;
 	font-family: 'Source Sans Pro', sans-serif;
 	margin:0;
 }
@@ -80,8 +80,9 @@ img#metter {
 }
 
 .tweet_board {
-	margin-top: 10px;
+	margin-top:10px;
 	margin-right:20px;
+        margin-left:10px;
 }
 
 /* Tweet Styling */
@@ -124,6 +125,7 @@ p.handle {
 
 .tweet {
 	margin-top:30px;
+        border: 1px solid #bababa;
 }
 
 .tweet_body p{
@@ -140,13 +142,13 @@ p.handle {
 
 /*Red*/
 .zero_box_red {
-	background-color:#cecece;
-	color:#fff;
- 	box-shadow: 20px 20px 0px 0px #7c7c7c;
+        background-color: #fff;
+        color:#000;
+        box-shadow: 10px 10px 0px 0px #bababa;
 }
 
 .title_holder img{
-  text-align: center;
-  width: 450px;
-  margin-top: 20px;
+        text-align: center;
+        width: 450px;
+        margin-top: 20px;
 }
