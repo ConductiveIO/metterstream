@@ -234,7 +234,7 @@ class TweetListener(StreamListener):
                        data.author.screen_name.replace(
                            '"', '\'').encode('utf-8').strip(),
                        data.author.profile_image_url.replace(
-                           '"', '\'').encode('utf-8').strip(),
+                           '"', '\'').encode('utf-8').strip().replace('normal', 'bigger'),
                        media_url.replace('"', '\'').encode(
                            'utf-8').strip() if media_url else str(media_url)
                        )
@@ -251,7 +251,8 @@ class TweetListener(StreamListener):
             'text': data.text.encode('utf-8').strip(),
             'user': data.user.name.encode('utf-8').strip(),
             'screen_name': data.author.screen_name.encode('utf-8').strip(),
-            'profile_image_url': data.user.profile_image_url.encode('utf-8').strip()
+            'profile_image_url': data.user.profile_image_url.encode(
+                'utf-8').strip().replace('normal', 'bigger')
         }
 
         # Add media url if present
