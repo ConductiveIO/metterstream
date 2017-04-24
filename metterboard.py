@@ -84,7 +84,7 @@ def handle_connection(msg):
     db = get_db()
     cur = db.execute("""
         SELECT id, text, user, screen_name, profile_image_url, media_url
-        FROM tblTweet ORDER BY id DESC;
+        FROM tblTweet ORDER BY id;
         """)
     tweets = cur.fetchall()
     for tweet in tweets:

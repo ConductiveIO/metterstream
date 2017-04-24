@@ -14,6 +14,12 @@ virtualenv venv
 pip install requirements.txt
 ```
 
+3. Precompile handlebars templates (NOTE: may need to `npm install handlebars`)
+```bash
+handlebars templates/tweets.handlebars -f static/tweets.tpl.js
+handlebars templates/admin_tweets.handlebars -f static/admin_tweets.tpl.js
+```
+
 ### Run
 ```bash
 gunicorn -k gevent -w 1 metterboard:app
