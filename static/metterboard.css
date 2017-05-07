@@ -35,11 +35,11 @@ h1 {
 .top_div {
 	margin:0px;
 	height:200px;
-	background: #ed5630; /* Old browsers */
-	background: -moz-linear-gradient(top, #ed5630 0%, #fcfcfc 100%); /* FF3.6-15 */
-	background: -webkit-linear-gradient(top, #ed5630 0%,#fcfcfc 100%); /* Chrome10-25,Safari5.1-6 */
-	background: linear-gradient(to bottom, #ed5630 0%,#fcfcfc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed5630', endColorstr='#fcfcfc',GradientType=0 ); /* IE6-9 */
+	background: #005596; /* Old browsers */
+	background: -moz-linear-gradient(top, #005596 0%, #fcfcfc 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #005596 0%,#fcfcfc 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #005596 0%,#fcfcfc 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#005596', endColorstr='#fcfcfc',GradientType=0 ); /* IE6-9 */
 }
 
 .title_holder {
@@ -56,10 +56,10 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ed5630', end
 	margin:-50px;
 }
 
-img#microsoft {
-        height:100px;
+img#massadvocates {
+        height:70px;
 	margin-top:-50px;
-	width:150px;
+	width:500px;
 	display:inline-block;
 	margin-right:20px;
 	padding:0;
