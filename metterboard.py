@@ -96,7 +96,8 @@ def handle_connection(msg):
             'profile_image_url': tweet['profile_image_url'],
             'media_url': tweet['media_url']
         })
-        socketio.emit(msg['client'], json_data.data)
+        # By using the SID of the current message as a 'room' id, we're able to target the sender only
+        socketio.emit(msg['client'], json_data.data, room=request.sid)
 
 
 @socketio.on('delete_tweet')
@@ -213,8 +214,12 @@ class TweetListener(StreamListener):
         need to fake an app context.
         """
         with app.test_request_context():
-            self.persist_tweet(data)
-            self.transmit_tweet(data)
+            # MM prefers not to display retweets. TODO: make this mutable
+            if not data.retweeted and not data.text.startswith('RT @'):
+                self.persist_tweet(data)
+                self.transmit_tweet(data)
+            else:
+                print data.text
         return True
 
     def persist_tweet(self, data):
@@ -227,16 +232,15 @@ class TweetListener(StreamListener):
                 INSERT INTO TBLTWEET (
                     id, text, user, screen_name, profile_image_url, media_url
                 ) VALUES (\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\");
-                """ % (data.id_str.encode('utf-8'),
-                       data.text.replace('"', '\'').encode('utf-8').strip(),
-                       data.user.name.replace(
-                           '"', '\'').encode('utf-8').strip(),
-                       data.author.screen_name.replace(
-                           '"', '\'').encode('utf-8').strip(),
-                       data.author.profile_image_url.replace(
-                           '"', '\'').encode('utf-8').strip().replace('normal', 'bigger'),
-                       media_url.replace('"', '\'').encode(
-                           'utf-8').strip() if media_url else str(media_url)
+                """ % (unicode(data.id_str),
+                       unicode(data.text.replace('"', '\'').strip()),
+                       unicode(data.user.name.replace(
+                           '"', '\'').strip()),
+                       unicode(data.author.screen_name.replace(
+                           '"', '\'').strip()),
+                       unicode(data.author.profile_image_url.replace(
+                           '"', '\'').strip().replace('normal', 'bigger')),
+                       unicode(media_url.replace('"', '\'').strip()) if media_url else str(media_url)
                        )
         )
         self.db.commit()
@@ -247,23 +251,22 @@ class TweetListener(StreamListener):
         """
         # Stream tweet to client
         tweet = {
-            'id': data.id_str.encode('utf-8'),
-            'text': data.text.encode('utf-8').strip(),
-            'user': data.user.name.encode('utf-8').strip(),
-            'screen_name': data.author.screen_name.encode('utf-8').strip(),
-            'profile_image_url': data.user.profile_image_url.encode(
-                'utf-8').strip().replace('normal', 'bigger')
+            'id': unicode(data.id_str),
+            'text': unicode(data.text.strip()),
+            'user': unicode(data.user.name.strip()),
+            'screen_name': unicode(data.author.screen_name.strip()),
+            'profile_image_url': unicode(data.user.profile_image_url.strip().replace('normal', 'bigger'))
         }
 
         # Add media url if present
         media_url = data.entities['media'][0]['media_url'] if data.entities.get(
             'media') else None
         if media_url:
-            tweet['media_url'] = media_url.replace(
-                '"', '\'').encode('utf-8').strip()
+            tweet['media_url'] = unicode(media_url.replace(
+                '"', '\'').strip())
 
         # Transmit tweet to clients
         json_data = jsonify(tweet)
-        socketio.emit('tweetstream', json_data.data.encode('utf-8').strip())
+        socketio.emit('tweetstream', unicode(json_data.data.strip()))
         socketio.emit('admin_tweetstream',
-                      json_data.data.encode('utf-8').strip())
+                      unicode(json_data.data.strip()))

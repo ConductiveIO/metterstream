@@ -33,6 +33,9 @@
       var html = Handlebars.templates.admin_tweet(context);
       $('.tweet_board').prepend(html);
     });
+    socket.on('delete_tweet_from_display', function(msg) {
+      $('.tweet#' + msg.id).remove();
+    });
   socket.emit('connection', {'client':'admin_tweetstream'});
   });
 </script>
