@@ -218,8 +218,6 @@ class TweetListener(StreamListener):
             if not data.retweeted and not data.text.startswith('RT @'):
                 self.persist_tweet(data)
                 self.transmit_tweet(data)
-            else:
-                print data.text
         return True
 
     def persist_tweet(self, data):
