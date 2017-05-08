@@ -27,6 +27,7 @@ app.config.update(dict(
     DATABASE=os.path.join(app.root_path, 'metterboard.db')
 ))
 
+# I dig socckets
 socketio = SocketIO(
     app,
     async_mode='gevent',
