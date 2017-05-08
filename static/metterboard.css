@@ -60,13 +60,13 @@ h1 {
 }
 
 img#massadvocates {
-        height:70px;
-	width:500px;
-	margin-top:-50px;
+        height:100px;
+	width:200px;
+	margin-top:-20px;
 	display:inline-block;
-	margin-right:-200px;
 	padding:0;
         vertical-align:middle;
+        margin-left:10px;
 }
 
 img#metter {
